@@ -24,6 +24,7 @@ python evaluate.py --csvpath annotation.csv --gtpath ./val/R --predpath ./pred/R
 
 ### Outputs (example)
 ```
+running: python psnr_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/psnr.txt
 running: python ssim_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/ssim.txt
 running: python pncc_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/pncc.txt
 combing all metrics and output category-wise results...
