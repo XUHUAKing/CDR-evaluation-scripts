@@ -91,9 +91,9 @@ class CDREvaluator:
         for key in cnts:
             print("%10s %03d %.3f %.3f %.3f" % (
             key, cnts[key],
-            psnrs[key] / float(cnts[key] + 1),
-            ssims[key] / float(cnts[key] + 1),
-            pnccs[key] / float(cnts[key] + 1)))
+            psnrs[key] / float(cnts[key]),
+            ssims[key] / float(cnts[key]),
+            pnccs[key] / float(cnts[key])))
 
     def _parse_txt(self, file):
         txt_rows = file.readlines()
