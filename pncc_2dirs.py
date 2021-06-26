@@ -6,6 +6,8 @@ import numpy as np
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+import subprocess
+from scipy import io
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-d0','--dir0', type=str, default='./val/T')
@@ -112,7 +114,7 @@ sess=tf.Session(config=config)
 sess.run(tf.global_variables_initializer())
 ######### Session #########
 
-def compare_PNCC(sess, tf_pncc, img1, img2):
+def compare_pncc(sess, tf_pncc, img1, img2):
         pncc = sess.run(tf_pncc,feed_dict={I1:img1[np.newaxis,:,:,:],I2:img2[np.newaxis,:,:,:]})
         return pncc
 
@@ -131,7 +133,7 @@ for idx, file in enumerate(files):
                 # Compute distance
                 dist01 = compare_pncc(sess, tf_pncc, img0,img1)
                 print('%s %.3f'%(file,dist01))
-                f.writelines('%s: %.6f\n'%(file,dist01))
+                f.writelines('%s %.6f\n'%(file,dist01))
                 dist_list.append(dist01)
         else:
                 missing_files.append(file)
