@@ -1,6 +1,12 @@
 # CDR-evaluation-scripts
 Evaluation codes for benchmarking
 
+### Pre-Steps
+Please test and output your predicted results before using this scripts. Your testing pipeline should be:
+(1) Use *_M* image as input to your model 
+(2) Store your output transmission as *_T*
+(3) Store your output reflection as *_R* (if any)
+
 ### Setup
 Need to download tensorflow and Python 3.6+, if you are using server 1, directly use this conda environment:
 ```
