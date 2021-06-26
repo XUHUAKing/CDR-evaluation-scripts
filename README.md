@@ -2,9 +2,9 @@
 Evaluation codes for benchmarking
 
 ### Setup
-Need to download tensorflow, if you are using server 1, directly use this conda environment:
+Need to download tensorflow and Python 3.6+, if you are using server 1, directly use this conda environment:
 ```
-conda activate tensorflow
+conda activate perceptual-reflection-removal
 ```
 
 Please download the VGG19 models for PNCC evaluation from this [link](https://hkustconnect-my.sharepoint.com/:f:/g/personal/cleiaa_connect_ust_hk/EmGaVX18EfFDn49CA_eTeEoBLhhvwv7aspvGp-GWD_sFTQ?e=GtOqnc).

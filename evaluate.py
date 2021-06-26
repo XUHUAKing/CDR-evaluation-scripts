@@ -12,7 +12,7 @@ import io
 
 class CDREvaluator:
     def __init__(self, csvpath, gtpath, predpath, outpath):
-        if os.path.exists('./VGG_Model/imagenet-vgg-verydeep-19.mat'):
+        if not os.path.exists('./VGG_Model/imagenet-vgg-verydeep-19.mat'):
             print("please download the VGG checkpoint following README.md first")
             exit()
         self.csvpath = csvpath
