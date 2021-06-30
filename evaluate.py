@@ -60,15 +60,20 @@ class CDREvaluator:
         csv_file = io.open(self.csvpath, encoding='utf-8-sig')
         rows = csv.DictReader(csv_file)
 
-        cnts = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0}
-        pnccs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0}
-        psnrs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0}
-        ssims = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0}
+        cnts = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
+        pnccs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
+        psnrs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
+        ssims = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
 
-        cnt = 0
         for row in rows:
             new_name = row['name'].replace('/', '_')
             if new_name in pncc_metrics:
+                # count for ALL
+                cnts['all'] += 1
+                psnrs['all'] += float(psnr_metrics[new_name])
+                ssims['all'] += float(ssim_metrics[new_name])
+                pnccs['all'] += float(pncc_metrics[new_name])
+                # count for each type
                 cnts[row['type']] += 1
                 cnts[row['reflection']] += 1
                 # ghosting
@@ -86,9 +91,7 @@ class CDREvaluator:
                 ssims[row['reflection']] += float(ssim_metrics[new_name])
                 pnccs[row['reflection']] += float(pncc_metrics[new_name])
 
-                cnt += 1
-
-        print(cnt, cnts)
+        print(cnts)
         for key in cnts:
             print("%10s %03d %.3f %.3f %.3f" % (
             key, cnts[key],
