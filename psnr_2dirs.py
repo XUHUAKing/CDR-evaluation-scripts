@@ -14,13 +14,16 @@ opt = parser.parse_args()
 
 # crawl directories
 f = open(opt.out,'w')
-files = sorted(os.listdir(opt.dir0))
-files1 = sorted(os.listdir(opt.dir1))
+files = sorted(os.listdir(opt.dir0)) # gt
+files1 = sorted(os.listdir(opt.dir1)) # pred
 
 dist_list = []
 missing_files = []
 for idx, file in enumerate(files):
         if(os.path.exists(os.path.join(opt.dir1,files1[idx]))):
+                file1 = files1[idx].replace("_M_", "_T_")
+                if file1 != file:
+                        print("!!!WARNING: unmatched pair - %s vs %s"%(file, file1))
                 # Load images
                 img0 = imageio.imread(os.path.join(opt.dir0,file))/255. # RGB image from [-1,1]
                 img1 = imageio.imread(os.path.join(opt.dir1,files1[idx]))/255.

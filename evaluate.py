@@ -45,7 +45,7 @@ class CDREvaluator:
         os.system(cmd)
 
     def combine_results(self):
-        # ensure all metrics are ready to combine
+        # ensure all metrics are ready to combine (this constraint will be removed in the future)
         assert (self.pncc_path is not None) and (self.psnr_path is not None) and (self.ssim_path is not None)
         # parse txt metrics files
         pncc_file = open(self.pncc_path, 'r')
@@ -54,7 +54,8 @@ class CDREvaluator:
         psnr_metrics = self._parse_txt(psnr_file)
         ssim_file = open(self.ssim_path, 'r')
         ssim_metrics = self._parse_txt(ssim_file)
-        assert len(pncc_metrics.keys()) == len(psnr_metrics.keys()) == len(ssim_metrics.keys())
+        if not (len(pncc_metrics.keys()) == len(psnr_metrics.keys()) == len(ssim_metrics.keys())):
+           print("!!!WARNING: the number of images are different in PNCC, PSNR and SSIM txts")
         # parse csv files
         csv_file = io.open(self.csvpath, encoding='utf-8-sig')
         rows = csv.DictReader(csv_file)
