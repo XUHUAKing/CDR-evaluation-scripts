@@ -8,7 +8,7 @@ Please test and output your predicted results before using this scripts. Your te
 3. Save your output reflection using the same name as input (if any), under a folder named "R/"
 
 ### Setup
-Need to download tensorflow and Python 3.6+, if you are using server 1, directly use this conda environment:
+Need to download tensorflow and Python 3.6+, if you are using server 2, directly use this conda environment:
 ```
 conda activate perceptual-reflection-removal
 ```
