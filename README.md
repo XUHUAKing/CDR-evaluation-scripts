@@ -8,9 +8,9 @@ Please test and output your predicted results before using this scripts. Your te
 3. Save your output reflection using the same name as input (if any), under a folder named "R/"
 
 ### Setup
-Need to download tensorflow and Python 3.6+, if you are using server 2, directly use this conda environment:
+Need to download tensorflow 1.13.1+ and Python 3.6+, if you are using server 2, directly use this conda environment:
 ```
-conda activate perceptual-reflection-removal
+conda activate polar-reflection-rm
 ```
 
 Please download the VGG19 models for PNCC evaluation from this [link](https://hkustconnect-my.sharepoint.com/:f:/g/personal/cleiaa_connect_ust_hk/EmGaVX18EfFDn49CA_eTeEoBLhhvwv7aspvGp-GWD_sFTQ?e=GtOqnc).
