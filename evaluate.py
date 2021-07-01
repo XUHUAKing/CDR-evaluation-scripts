@@ -12,9 +12,9 @@ import io
 
 class CDREvaluator:
     def __init__(self, csvpath, gtpath, predpath, outpath):
-        if not os.path.exists('./VGG_Model/imagenet-vgg-verydeep-19.mat'):
-            print("please download the VGG checkpoint following README.md first")
-            exit()
+        # if not os.path.exists('./VGG_Model/imagenet-vgg-verydeep-19.mat'):
+        #     print("please download the VGG checkpoint following README.md first")
+        #     exit()
         self.csvpath = csvpath
         self.gtpath = gtpath
         self.predpath = predpath
@@ -28,21 +28,21 @@ class CDREvaluator:
         self.pncc_path = os.path.join(self.outpath, "pncc.txt")
         cmd = f"python pncc_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.pncc_path}"
         print("running: %s"%(cmd))
-        os.system(cmd)
+        # os.system(cmd)
 
     def evaluate_psnr(self):
         # command to evaluate psnr metric
         self.psnr_path = os.path.join(self.outpath, "psnr.txt")
         cmd = f"python psnr_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.psnr_path}"
         print("running: %s"%(cmd))
-        os.system(cmd)
+        # os.system(cmd)
 
     def evaluate_ssim(self):
         # command to evaluate ssim metric
         self.ssim_path = os.path.join(self.outpath, "ssim.txt")
         cmd = f"python ssim_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.ssim_path}"
         print("running: %s"%(cmd))
-        os.system(cmd)
+        # os.system(cmd)
 
     def combine_results(self):
         # ensure all metrics are ready to combine (this constraint will be removed in the future)
@@ -67,29 +67,30 @@ class CDREvaluator:
 
         for row in rows:
             new_name = row['name'].replace('/', '_')
-            if new_name in pncc_metrics:
+            if new_name in psnr_metrics:
                 # count for ALL
-                cnts['all'] += 1
-                psnrs['all'] += float(psnr_metrics[new_name])
-                ssims['all'] += float(ssim_metrics[new_name])
-                pnccs['all'] += float(pncc_metrics[new_name])
+                num_crops_for_curr_id = int(psnr_metrics[new_name][1])
+                cnts['all'] += num_crops_for_curr_id
+                psnrs['all'] += float(psnr_metrics[new_name][0])
+                ssims['all'] += float(ssim_metrics[new_name][0])
+                pnccs['all'] += float(pncc_metrics[new_name][0])
                 # count for each type
-                cnts[row['type']] += 1
-                cnts[row['reflection']] += 1
+                cnts[row['type']] += num_crops_for_curr_id
+                cnts[row['reflection']] += num_crops_for_curr_id
                 # ghosting
                 ghost_name = 'ghost_yes' if row['ghost'] == '1' else 'ghost_no'
-                cnts[ghost_name] += 1
-                psnrs[ghost_name] += float(psnr_metrics[new_name])
-                ssims[ghost_name] += float(ssim_metrics[new_name])
-                pnccs[ghost_name] += float(pncc_metrics[new_name])
+                cnts[ghost_name] += num_crops_for_curr_id
+                psnrs[ghost_name] += float(psnr_metrics[new_name][0])
+                ssims[ghost_name] += float(ssim_metrics[new_name][0])
+                pnccs[ghost_name] += float(pncc_metrics[new_name][0])
                 # BRBT / BRST / SRST
-                psnrs[row['type']] += float(psnr_metrics[new_name])
-                ssims[row['type']] += float(ssim_metrics[new_name])
-                pnccs[row['type']] += float(pncc_metrics[new_name])
+                psnrs[row['type']] += float(psnr_metrics[new_name][0])
+                ssims[row['type']] += float(ssim_metrics[new_name][0])
+                pnccs[row['type']] += float(pncc_metrics[new_name][0])
                 # weak / medium / strong
-                psnrs[row['reflection']] += float(psnr_metrics[new_name])
-                ssims[row['reflection']] += float(ssim_metrics[new_name])
-                pnccs[row['reflection']] += float(pncc_metrics[new_name])
+                psnrs[row['reflection']] += float(psnr_metrics[new_name][0])
+                ssims[row['reflection']] += float(ssim_metrics[new_name][0])
+                pnccs[row['reflection']] += float(pncc_metrics[new_name][0])
 
         print(cnts)
         for key in cnts:
@@ -105,7 +106,13 @@ class CDREvaluator:
         for row in txt_rows:
             contents = row[:-1].split(' ')
             id = "_".join(contents[0].split("_")[:3])
-            metrics[id] = float(contents[1])
+            # metrics: {id: (metric value sume, counter)}
+            if id in metrics:
+                # multiple crops for this images, update metric sum and counter
+                metrics[id] = (metrics[id][0] + float(contents[1]), metrics[id][1] + 1)
+            else:
+                # initialize
+                metrics[id] = (float(contents[1]), 1)
         return metrics
 
 
