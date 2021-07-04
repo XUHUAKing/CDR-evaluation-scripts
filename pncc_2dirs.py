@@ -19,6 +19,8 @@ opt = parser.parse_args()
 vgg_path = io.loadmat('./VGG_Model/imagenet-vgg-verydeep-19.mat')
 print("[i] Loaded pre-trained vgg19 parameters")
 
+os.environ["CUDA_DEVICE_ORDER"]='PCI_BUS_ID'
+os.environ["CUDA_VISIBLE_DEVICES"]='7'
 
 # build VGG19 to load pre-trained parameters
 
@@ -100,7 +102,7 @@ def compute_pncc_loss(input, output, reuse=False):
         return (p2 + p3 + p4) / 3
 
 # get available GPU
-os.environ["CUDA_VISIBLE_DEVICES"]=str(np.argmax( [int(x.split()[2]) for x in subprocess.Popen("nvidia-smi -q -d Memory | grep -A4 GPU | grep Free", shell=True, stdout=subprocess.PIPE).stdout.readlines()]))
+# os.environ["CUDA_VISIBLE_DEVICES"]=str(np.argmax( [int(x.split()[2]) for x in subprocess.Popen("nvidia-smi -q -d Memory | grep -A4 GPU | grep Free", shell=True, stdout=subprocess.PIPE).stdout.readlines()]))
 
 with tf.variable_scope(tf.get_variable_scope()):
         I1=tf.placeholder(tf.float32,shape=[None,None,None,3])

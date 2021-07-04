@@ -35,14 +35,14 @@ class CDREvaluator:
         self.psnr_path = os.path.join(self.outpath, "psnr.txt")
         cmd = f"python psnr_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.psnr_path}"
         print("running: %s"%(cmd))
-        os.system(cmd)
+        #os.system(cmd)
 
     def evaluate_ssim(self):
         # command to evaluate ssim metric
         self.ssim_path = os.path.join(self.outpath, "ssim.txt")
         cmd = f"python ssim_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.ssim_path}"
         print("running: %s"%(cmd))
-        os.system(cmd)
+        #os.system(cmd)
 
     def combine_results(self):
         # ensure all metrics are ready to combine (this constraint will be removed in the future)
