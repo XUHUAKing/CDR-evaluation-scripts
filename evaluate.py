@@ -1,6 +1,6 @@
 """
 API for evaluating CDR dataset: PNCC, PSNR, SSIM
-Lastest update: Jun. 25, 2021
+Lastest update: July. 04, 2021
 """
 import os
 import csv
@@ -27,21 +27,21 @@ class CDREvaluator:
         # command to evaluate pncc metric
         self.pncc_path = os.path.join(self.outpath, "pncc.txt")
         cmd = f"python pncc_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.pncc_path}"
-        print("running: %s"%(cmd))
+        print("calculating PNCC metric...")
         os.system(cmd)
 
     def evaluate_psnr(self):
         # command to evaluate psnr metric
         self.psnr_path = os.path.join(self.outpath, "psnr.txt")
         cmd = f"python psnr_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.psnr_path}"
-        print("running: %s"%(cmd))
+        print("calculating PSNR metric...")
         os.system(cmd)
 
     def evaluate_ssim(self):
         # command to evaluate ssim metric
         self.ssim_path = os.path.join(self.outpath, "ssim.txt")
         cmd = f"python ssim_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.ssim_path}"
-        print("running: %s"%(cmd))
+        print("calculating SSIM metric...")
         os.system(cmd)
 
     def combine_results(self):

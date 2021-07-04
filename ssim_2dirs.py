@@ -3,6 +3,7 @@ import os
 from skimage.measure import compare_psnr, compare_ssim
 import imageio
 import numpy as np
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-d0','--dir0', type=str, default='./val/T')
@@ -25,7 +26,8 @@ files1 = sorted(os.listdir(opt.dir1)) # pred
 
 dist_list = []
 missing_files = []
-for idx, file in enumerate(files):
+for idx in tqdm(range(len(files))):
+        file = files[idx]
         if(os.path.exists(os.path.join(opt.dir1,files1[idx]))):
                 file1 = files1[idx].replace("_M_", "_T_")
                 if file1 != file:
@@ -40,7 +42,7 @@ for idx, file in enumerate(files):
 
                 # Compute distance
                 dist01 = compare_ssim(img0, img1)
-                print('%s %.3f'%(file,dist01))
+                # print('%s %.3f'%(file,dist01))
                 f.writelines('%s %.6f\n'%(file,dist01))
                 dist_list.append(dist01)
         else:
