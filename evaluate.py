@@ -145,6 +145,9 @@ if __name__ == "__main__":
     parser = create_parser()
     args = parse_args(parser)
 
+    # create output dir if not exists
+    os.makedirs(args.output, exist_ok=True)
+
     evaluator = CDREvaluator(args.csvpath, args.gtpath, args.predpath, args.output)
     # evaluate on every metric in turns
     if args.psnr:
