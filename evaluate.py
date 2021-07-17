@@ -1,5 +1,5 @@
 """
-API for evaluating CDR dataset: PNCC, PSNR, SSIM
+API for evaluating CDR dataset: PNCC, PSNR, SSIM, NCC
 Lastest update: July. 04, 2021
 """
 import os
@@ -19,9 +19,17 @@ class CDREvaluator:
         self.gtpath = gtpath
         self.predpath = predpath
         self.outpath = outpath # output folder storing txt
+        self.ncc_path = None
         self.pncc_path = None
         self.psnr_path = None
         self.ssim_path = None
+
+    def evaluate_ncc(self):
+        # command to evaluate ncc metric
+        self.ncc_path = os.path.join(self.outpath, "ncc.txt")
+        cmd = f"python ncc_2dirs.py -d0 {self.gtpath} -d1 {self.predpath} -o {self.ncc_path}"
+        print("calculating NCC metric...")
+        os.system(cmd)
 
     def evaluate_pncc(self):
         # command to evaluate pncc metric
@@ -46,22 +54,22 @@ class CDREvaluator:
 
     def combine_results(self):
         # ensure all metrics are ready to combine (this constraint will be removed in the future)
-        assert (self.pncc_path is not None) and (self.psnr_path is not None) and (self.ssim_path is not None)
+        assert (self.ncc_path is not None) and (self.psnr_path is not None) and (self.ssim_path is not None)
         # parse txt metrics files
-        pncc_file = open(self.pncc_path, 'r')
-        pncc_metrics = self._parse_txt(pncc_file)
+        ncc_file = open(self.ncc_path, 'r')
+        ncc_metrics = self._parse_txt(ncc_file)
         psnr_file = open(self.psnr_path, 'r')
         psnr_metrics = self._parse_txt(psnr_file)
         ssim_file = open(self.ssim_path, 'r')
         ssim_metrics = self._parse_txt(ssim_file)
-        if not (len(pncc_metrics.keys()) == len(psnr_metrics.keys()) == len(ssim_metrics.keys())):
-           print("!!!WARNING: the number of images are different in PNCC, PSNR and SSIM txts")
+        if not (len(ncc_metrics.keys()) == len(psnr_metrics.keys()) == len(ssim_metrics.keys())):
+           print("!!!WARNING: the number of images are different in NCC, PSNR and SSIM txts")
         # parse csv files
         csv_file = io.open(self.csvpath, encoding='utf-8-sig')
         rows = csv.DictReader(csv_file)
 
         cnts = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
-        pnccs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
+        nccs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
         psnrs = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
         ssims = {'BRBT': 0, 'BRST': 0, 'SRST': 0, 'weak': 0, 'medium': 0, 'strong': 0, 'ghost_yes': 0, 'ghost_no': 0, 'all': 0}
 
@@ -73,7 +81,7 @@ class CDREvaluator:
                 cnts['all'] += num_crops_for_curr_id
                 psnrs['all'] += float(psnr_metrics[new_name][0])
                 ssims['all'] += float(ssim_metrics[new_name][0])
-                pnccs['all'] += float(pncc_metrics[new_name][0])
+                nccs['all'] += float(ncc_metrics[new_name][0])
                 # count for each type
                 cnts[row['type']] += num_crops_for_curr_id
                 cnts[row['reflection']] += num_crops_for_curr_id
@@ -82,15 +90,15 @@ class CDREvaluator:
                 cnts[ghost_name] += num_crops_for_curr_id
                 psnrs[ghost_name] += float(psnr_metrics[new_name][0])
                 ssims[ghost_name] += float(ssim_metrics[new_name][0])
-                pnccs[ghost_name] += float(pncc_metrics[new_name][0])
+                nccs[ghost_name] += float(ncc_metrics[new_name][0])
                 # BRBT / BRST / SRST
                 psnrs[row['type']] += float(psnr_metrics[new_name][0])
                 ssims[row['type']] += float(ssim_metrics[new_name][0])
-                pnccs[row['type']] += float(pncc_metrics[new_name][0])
+                nccs[row['type']] += float(ncc_metrics[new_name][0])
                 # weak / medium / strong
                 psnrs[row['reflection']] += float(psnr_metrics[new_name][0])
                 ssims[row['reflection']] += float(ssim_metrics[new_name][0])
-                pnccs[row['reflection']] += float(pncc_metrics[new_name][0])
+                nccs[row['reflection']] += float(ncc_metrics[new_name][0])
 
         print(cnts)
         for key in cnts:
@@ -98,7 +106,7 @@ class CDREvaluator:
             key, cnts[key],
             psnrs[key] / float(cnts[key]),
             ssims[key] / float(cnts[key]),
-            pnccs[key] / float(cnts[key])))
+            nccs[key] / float(cnts[key])))
 
     def _parse_txt(self, file):
         txt_rows = file.readlines()
@@ -129,7 +137,7 @@ def create_parser():
     parser.add_argument('--output', type=str, required=True,
                         help='path to store the metric results (txt, results)')
     # dataset choices
-    parser.add_argument('--pncc', action='store_true', help='evaluate on pncc')
+    parser.add_argument('--ncc', action='store_true', help='evaluate on ncc')
     parser.add_argument('--psnr', action='store_true', help='evaluate on psnr')
     parser.add_argument('--ssim', action='store_true', help='evaluate on ssim')
 
@@ -154,8 +162,8 @@ if __name__ == "__main__":
         evaluator.evaluate_psnr()
     if args.ssim:
         evaluator.evaluate_ssim()
-    if args.pncc:
-        evaluator.evaluate_pncc()
+    if args.ncc:
+        evaluator.evaluate_ncc()
     # combine evaluation metrics based on categories
     print("combing all metrics and output category-wise results...")
     evaluator.combine_results()
