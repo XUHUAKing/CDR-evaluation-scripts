@@ -19,20 +19,20 @@ Then put it under the folder ```VGG_Model/```
 ### Usage
 To test T (transmission image) on VAL:
 ```
-python evaluate.py --csvpath annotation.csv --gtpath ./val/T --predpath ./pred/T --output ./results --pncc --psnr --ssim
+python evaluate.py --csvpath annotation.csv --gtpath ./val/T --predpath ./pred/T --output ./results --ncc --psnr --ssim
 ```
 
 
 To test R (reflection image) on VAL:
 ```
-python evaluate.py --csvpath annotation.csv --gtpath ./val/R --predpath ./pred/R --output ./results --pncc --psnr --ssim
+python evaluate.py --csvpath annotation.csv --gtpath ./val/R --predpath ./pred/R --output ./results --ncc --psnr --ssim
 ```
 
 ### Outputs (example)
 ```
 running: python psnr_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/psnr.txt
 running: python ssim_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/ssim.txt
-running: python pncc_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/pncc.txt
+running: python ncc_2dirs.py -d0 ./val/T -d1 ./pred -o ./results/ncc.txt
 combing all metrics and output category-wise results...
 180 {'BRBT': 6, 'BRST': 100, 'SRST': 74, 'weak': 67, 'medium': 78, 'strong': 35, 'ghost_yes': 59, 'ghost_no': 121}
       BRBT 006 0.857 0.857 0.857
