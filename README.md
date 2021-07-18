@@ -46,3 +46,5 @@ combing all metrics and output category-wise results...
 Done! Benchmarking results are ready!
 ```
 
+Above results will also be stored in a file named ```result.txt```.
+

@@ -1,6 +1,6 @@
 """
 API for evaluating CDR dataset: PNCC, PSNR, SSIM, NCC
-Lastest update: July. 04, 2021
+Lastest update: July. 18, 2021
 """
 import os
 import csv
@@ -101,12 +101,17 @@ class CDREvaluator:
                 nccs[row['reflection']] += float(ncc_metrics[new_name][0])
 
         print(cnts)
+        # txt path saving the conclusive results
+        result_path = os.path.join(self.outpath, "result.txt")
+        f = open(result_path,'w')
         for key in cnts:
-            print("%10s %03d %.3f %.3f %.3f" % (
+            res = "%10s %03d %.3f %.3f %.3f" % (
             key, cnts[key],
             psnrs[key] / float(cnts[key]),
             ssims[key] / float(cnts[key]),
-            nccs[key] / float(cnts[key])))
+            nccs[key] / float(cnts[key]))
+            f.writelines('%s\n' % (res))
+            print(res)
 
     def _parse_txt(self, file):
         txt_rows = file.readlines()
