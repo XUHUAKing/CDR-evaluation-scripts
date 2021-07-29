@@ -1,10 +1,11 @@
-# import cv2
+import cv2
 import glob
 import os.path
 
 import numpy as np
 
 output_dir = "concat_results"
+data_prefix = "cdr_down4_crop32/"
 names = [
     ["gt/M", "gt/T", "CoRRN/T", "IBCLN/T", "Kim_et_al/T"],
     ["zhang/T", "CEILNet/T", "Arvan_et_al/T", "Li_et_al/T", "Yang_et_al/T"],
@@ -17,12 +18,10 @@ row_images = []
 for row in names:
     col_images = []
     for folder_name in row:
-        filenames = sorted(glob.glob(folder_name+"/*.png"))
+        filenames = sorted(glob.glob(data_prefix+folder_name+"/*.png"))
         col_images.append(filenames)
     row_images.append(col_images)
-
 num_images = len(row_images[0][0])
-curr_id = 0
 # start concatenating results
 for i in range(num_images):
     vis_row = []
@@ -38,3 +37,4 @@ for i in range(num_images):
     # save image using gt/M name
     basename = os.path.basename(filenames[i])
     cv2.imwrite(os.path.join(output_dir, basename), vis_img)
+    print("%s saved"%(basename))
