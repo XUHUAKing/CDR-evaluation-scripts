@@ -1,6 +1,6 @@
 """
 API for evaluating CDR dataset: PNCC, PSNR, SSIM, NCC
-Lastest update: July. 18, 2021
+Lastest update: Aug. 4, 2021
 """
 import os
 import csv
@@ -11,7 +11,7 @@ import io
 
 
 class CDREvaluator:
-    def __init__(self, csvpath, gtpath, predpath, outpath):
+    def __init__(self, csvpath, gtpath, predpath, outpath, problem_txt):
         if not os.path.exists('./VGG_Model/imagenet-vgg-verydeep-19.mat'):
             print("please download the VGG checkpoint following README.md first")
             exit()
@@ -19,6 +19,9 @@ class CDREvaluator:
         self.gtpath = gtpath
         self.predpath = predpath
         self.outpath = outpath # output folder storing txt
+        with open(problem_txt, 'r') as f:
+            self.problemlist = f.readlines()
+            self.problemlist = [line.rstrip() for line in self.problemlist]
         self.ncc_path = None
         self.pncc_path = None
         self.psnr_path = None
@@ -118,6 +121,8 @@ class CDREvaluator:
         metrics = {}
         for row in txt_rows:
             contents = row[:-1].split(' ')
+            # skip problematic crops
+            if contents[0] in self.problemlist: continue
             id = "_".join(contents[0].split("_")[:3])
             # metrics: {id: (metric value sume, counter)}
             if id in metrics:
@@ -141,6 +146,8 @@ def create_parser():
                         help='path to predicted outputs')
     parser.add_argument('--output', type=str, required=True,
                         help='path to store the metric results (txt, results)')
+    parser.add_argument('--problem_txt', type=str, required=True,
+                        help='store the problematic crops')
     # dataset choices
     parser.add_argument('--ncc', action='store_true', help='evaluate on ncc')
     parser.add_argument('--psnr', action='store_true', help='evaluate on psnr')
@@ -161,7 +168,7 @@ if __name__ == "__main__":
     # create output dir if not exists
     os.makedirs(args.output, exist_ok=True)
 
-    evaluator = CDREvaluator(args.csvpath, args.gtpath, args.predpath, args.output)
+    evaluator = CDREvaluator(args.csvpath, args.gtpath, args.predpath, args.output, args.problem_txt)
     # evaluate on every metric in turns
     if args.psnr:
         evaluator.evaluate_psnr()

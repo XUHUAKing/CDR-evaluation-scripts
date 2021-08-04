@@ -19,13 +19,13 @@ Then put it under the folder ```VGG_Model/```
 ### Usage
 To test T (transmission image) on VAL:
 ```
-python evaluate.py --csvpath annotation.csv --gtpath ./val/T --predpath ./pred/T --output ./results --ncc --psnr --ssim
+python evaluate.py --csvpath annotation.csv --gtpath ./val/T --predpath ./pred/T --output ./results --problem_txt problem.txt --ncc --psnr --ssim
 ```
 
 
 To test R (reflection image) on VAL:
 ```
-python evaluate.py --csvpath annotation.csv --gtpath ./val/R --predpath ./pred/R --output ./results --ncc --psnr --ssim
+python evaluate.py --csvpath annotation.csv --gtpath ./val/R --predpath ./pred/R --output ./results --problem_txt problem.txt --ncc --psnr --ssim
 ```
 
 ### Outputs (example)
